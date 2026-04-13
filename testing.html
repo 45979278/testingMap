@@ -1,187 +1,191 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Editable Warehouse Map</title>
+<meta charset="utf-8" />
+<title>Editable Warehouse Map</title>
 
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-    }
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
 
-    #toolbar {
-      height: 50px;
-      background: #222;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      padding: 0 15px;
-    }
+#toolbar {
+  height: 50px;
+  background: #222;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+}
 
-    #toolbar button {
-      margin-right: 10px;
-      padding: 6px 10px;
-      border: none;
-      cursor: pointer;
-      background: #4caf50;
-      color: #fff;
-      border-radius: 4px;
-    }
+#toolbar button {
+  margin-right: 10px;
+  padding: 6px 10px;
+  border: none;
+  cursor: pointer;
+  background: #4caf50;
+  color: white;
+  border-radius: 4px;
+}
 
-    #toolbar span {
-      margin-left: auto;
-      font-size: 13px;
-      opacity: 0.8;
-    }
+#toolbar span {
+  margin-left: auto;
+  font-size: 13px;
+  opacity: 0.8;
+}
 
-    #canvas-wrapper {
-      height: calc(100% - 50px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+#canvas-wrapper {
+  height: calc(100% - 50px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    svg {
-      background-color: #ffffff;
-      border: 2px solid #333;
-    }
+svg {
+  background-color: #ffffff;
+  border: 2px solid #333;
+}
 
-    .zone {
-      cursor: move;
-      stroke: #333;
-      stroke-width: 2;
-      fill-opacity: 0.6;
-    }
+.zone {
+  cursor: move;
+  stroke: #333;
+  stroke-width: 2;
+  fill-opacity: 0.8;
+}
 
-    .zone text {
-      pointer-events: none;
-      font-size: 12px;
-      fill: #000;
-      font-weight: bold;
-    }
+.zone text {
+  pointer-events: none;
+  font-size: 4px;
+  fill: #000;
+  font-weight: bold;
+}
 
-    .receiving { fill: #81d4fa; }
-    .storage   { fill: #c5e1a5; }
-    .picking   { fill: #ffcc80; }
-    .shipping  { fill: #ef9a9a; }
+.green { fill: #2ecc71; }
+.gray  { fill: #bdc3c7; }
+.red   { fill: #e74c3c; }
+.blue  { fill: #3498db; }
+.yellow{ fill: #f1c40f; }
 
-    .selected {
-      stroke-dasharray: 5,5;
-    }
-  </style>
+.selected {
+  stroke-dasharray: 4,4;
+}
+</style>
 </head>
 
 <body>
-  <div id="toolbar">
-    <button onclick="addZone('storage')">Add Storage</button>
-    <button onclick="addZone('picking')">Add Picking</button>
-    <button onclick="addZone('receiving')">Add Receiving</button>
-    <button onclick="addZone('shipping')">Add Shipping</button>
-    <span>Warehouse size: 200m × 200m</span>
-  </div>
 
-  <div id="canvas-wrapper">
-    <!-- 1px = 1 meter scale -->
-    <svg id="warehouseMap" width="800" height="800" viewBox="0 0 200 200">
-      <!-- Warehouse boundary -->
-      <rect x="0" y="0" width="200" height="200"
-            fill="none" stroke="#000" stroke-width="2" />
+<div id="toolbar">
+  <button onclick="addZone('green')">Add Station</button>
+  <button onclick="addZone('gray')">Add Path</button>
+  <button onclick="addZone('red')">Add Exit</button>
+  <span>Warehouse size: 200m × 200m</span>
+</div>
 
-      <!-- Grid -->
-      <g stroke="#ddd" stroke-width="0.2">
-        <script>
-          for (let i = 0; i <= 200; i += 10) {
-            document.write(`<line x1="${i}" y1="0" x2="${i}" y2="200"/>`);
-            document.write(`<line x1="0" y1="${i}" x2="200" y2="${i}"/>`);
-          }
-        </script>
-      </g>
+<div id="canvas-wrapper">
+<svg id="warehouseMap" width="800" height="800" viewBox="0 0 200 200">
 
-      <!-- Zones container -->
-      <g id="zones"></g>
-    </svg>
-  </div>
+<!-- Boundary -->
+<rect x="0" y="0" width="200" height="200" fill="none" stroke="black" stroke-width="2"/>
 
-  <script>
-    const svg = document.getElementById("warehouseMap");
-    const zonesGroup = document.getElementById("zones");
+<!-- Grid -->
+<g stroke="#ddd" stroke-width="0.3">
+<script>
+for (let i = 0; i <= 200; i += 10) {
+  document.write(`<line x1="${i}" y1="0" x2="${i}" y2="200"/>`);
+  document.write(`<line x1="0" y1="${i}" x2="200" y2="${i}"/>`);
+}
+</script>
+</g>
 
-    let selectedZone = null;
-    let offset = { x: 0, y: 0 };
+<g id="zones">
 
-    const zoneDefaults = {
-      receiving: { w: 30, h: 25, class: "receiving", label: "Receiving" },
-      storage:   { w: 50, h: 50, class: "storage", label: "Storage" },
-      picking:   { w: 40, h: 30, class: "picking", label: "Picking" },
-      shipping:  { w: 30, h: 25, class: "shipping", label: "Shipping" }
-    };
+<!-- Top Left Row -->
+<g class="zone green"><rect x="10" y="10" width="16" height="6"/><text x="11" y="14">UB002</text></g>
+<g class="zone green"><rect x="38" y="10" width="16" height="6"/><text x="39" y="14">ST200</text></g>
+<g class="zone green"><rect x="66" y="10" width="16" height="6"/><text x="67" y="14">ST203</text></g>
+<g class="zone green"><rect x="94" y="10" width="16" height="6"/><text x="95" y="14">ST300</text></g>
+<g class="zone green"><rect x="122" y="10" width="16" height="6"/><text x="123" y="14">ST350</text></g>
+<g class="zone green"><rect x="144" y="18" width="16" height="6"/><text x="145" y="22">ST340</text></g>
 
-    function addZone(type) {
-      const z = zoneDefaults[type];
-      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+<!-- Exit -->
+<g class="zone red"><rect x="168" y="8" width="20" height="10"/><text x="172" y="15">EXIT</text></g>
 
-      const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      rect.setAttribute("x", 10);
-      rect.setAttribute("y", 10);
-      rect.setAttribute("width", z.w);
-      rect.setAttribute("height", z.h);
-      rect.setAttribute("class", `zone ${z.class}`);
+<!-- Vertical Stations Left -->
+<g class="zone green"><rect x="10" y="30" width="6" height="16"/><text x="10.5" y="40">ST100</text></g>
+<g class="zone green"><rect x="10" y="50" width="6" height="16"/><text x="10.5" y="60">ST110</text></g>
+<g class="zone green"><rect x="10" y="70" width="6" height="16"/><text x="10.5" y="80">ST120</text></g>
+<g class="zone green"><rect x="10" y="90" width="6" height="16"/><text x="10.5" y="100">ST130</text></g>
 
-      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      text.setAttribute("x", 14);
-      text.setAttribute("y", 24);
-      text.textContent = z.label;
+<!-- Centre racks -->
+<g class="zone green"><rect x="44" y="50" width="16" height="6"/><text x="45" y="54">ST095</text></g>
+<g class="zone green"><rect x="70" y="50" width="16" height="6"/><text x="71" y="54">ST040</text></g>
+<g class="zone green"><rect x="96" y="50" width="16" height="6"/><text x="97" y="54">ST020</text></g>
 
-      g.appendChild(rect);
-      g.appendChild(text);
-      zonesGroup.appendChild(g);
+<!-- RE02 -->
+<g class="zone gray"><rect x="60" y="42" width="16" height="6"/><text x="61" y="46">RE02</text></g>
 
-      makeDraggable(g, rect);
-    }
+<!-- Right Rear -->
+<g class="zone gray"><rect x="80" y="70" width="40" height="10"/><text x="82" y="77">Right Rear End</text></g>
 
-    function makeDraggable(group, rect) {
-      group.addEventListener("mousedown", startDrag);
+<!-- Logistics -->
+<g class="zone gray"><rect x="90" y="120" width="30" height="8"/><text x="93" y="125">Logistics</text></g>
 
-      function startDrag(e) {
-        selectedZone = group;
-        deselectAll();
-        rect.classList.add("selected");
+<!-- Endpoints -->
+<g class="zone red"><rect x="10" y="120" width="16" height="6"/><text x="11" y="124">End</text></g>
+<g class="zone red"><rect x="28" y="120" width="16" height="6"/><text x="29" y="124">End</text></g>
 
-        offset.x = e.offsetX - rect.getAttribute("x");
-        offset.y = e.offsetY - rect.getAttribute("y");
+<!-- Robots Area -->
+<g class="zone yellow"><rect x="60" y="150" width="10" height="10"/><text x="61" y="156">IR1</text></g>
+<g class="zone yellow"><rect x="75" y="150" width="10" height="10"/><text x="76" y="156">IR2</text></g>
+<g class="zone yellow"><rect x="60" y="165" width="10" height="10"/><text x="61" y="171">IR3</text></g>
+<g class="zone yellow"><rect x="75" y="165" width="10" height="10"/><text x="76" y="171">IR4</text></g>
 
-        svg.addEventListener("mousemove", drag);
-        svg.addEventListener("mouseup", endDrag);
-      }
+<!-- LHS / RHS -->
+<g class="zone blue"><rect x="45" y="145" width="12" height="6"/><text x="46" y="149">LHS</text></g>
+<g class="zone blue"><rect x="90" y="145" width="12" height="6"/><text x="91" y="149">RHS</text></g>
 
-      function drag(e) {
-        if (!selectedZone) return;
-        let x = (e.offsetX * 200) / 800 - offset.x;
-        let y = (e.offsetY * 200) / 800 - offset.y;
+</g>
+</svg>
+</div>
 
-        x = Math.max(0, Math.min(200 - rect.getAttribute("width"), x));
-        y = Math.max(0, Math.min(200 - rect.getAttribute("height"), y));
+<script>
+const svg = document.getElementById("warehouseMap");
+let selected = null, offset = {};
 
-        rect.setAttribute("x", x);
-        rect.setAttribute("y", y);
+svg.addEventListener("mousedown", e => {
+  const g = e.target.closest(".zone");
+  if (!g) return;
+  selected = g;
+  const rect = g.querySelector("rect");
+  offset.x = e.offsetX - rect.x.baseVal.value * 4;
+  offset.y = e.offsetY - rect.y.baseVal.value * 4;
+  g.classList.add("selected");
+});
 
-        group.querySelector("text").setAttribute("x", parseFloat(x) + 4);
-        group.querySelector("text").setAttribute("y", parseFloat(y) + 14);
-      }
+svg.addEventListener("mousemove", e => {
+  if (!selected) return;
+  const rect = selected.querySelector("rect");
+  const text = selected.querySelector("text");
+  let x = (e.offsetX - offset.x) / 4;
+  let y = (e.offsetY - offset.y) / 4;
+  rect.setAttribute("x", x);
+  rect.setAttribute("y", y);
+  text.setAttribute("x", x + 1);
+  text.setAttribute("y", y + 4);
+});
 
-      function endDrag() {
-        svg.removeEventListener("mousemove", drag);
-        svg.removeEventListener("mouseup", endDrag);
-        selectedZone = null;
-      }
-    }
+svg.addEventListener("mouseup", () => {
+  if (selected) selected.classList.remove("selected");
+  selected = null;
+});
 
-    function deselectAll() {
-      document.querySelectorAll(".zone").forEach(z => z.classList.remove("selected"));
-    }
-  </script>
+function addZone(color) {
+  alert("Use drag‑to‑duplicate logic if needed.");
+}
+</script>
+
 </body>
 </html>
