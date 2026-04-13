@@ -45,7 +45,7 @@ html, body {
 }
 
 svg {
-  background-color: #ffffff;
+  background: #fff;
   border: 2px solid #333;
 }
 
@@ -53,25 +53,19 @@ svg {
   cursor: move;
   stroke: #333;
   stroke-width: 2;
-  fill-opacity: 0.8;
+  fill-opacity: 0.85;
 }
 
 .zone text {
   pointer-events: none;
   font-size: 4px;
-  fill: #000;
   font-weight: bold;
 }
 
-.green { fill: #2ecc71; }
-.gray  { fill: #bdc3c7; }
-.red   { fill: #e74c3c; }
-.blue  { fill: #3498db; }
-.yellow{ fill: #f1c40f; }
-
-.selected {
-  stroke-dasharray: 4,4;
-}
+.green { fill:#2ecc71; }
+.gray  { fill:#bdc3c7; }
+.red   { fill:#e74c3c; }
+.blue  { fill:#3498db; }
 </style>
 </head>
 
@@ -79,7 +73,7 @@ svg {
 
 <div id="toolbar">
   <button onclick="addZone('green')">Add Station</button>
-  <button onclick="addZone('gray')">Add Path</button>
+  <button onclick="addZone('gray')">Add Block</button>
   <button onclick="addZone('red')">Add Exit</button>
   <span>Warehouse size: 200m × 200m</span>
 </div>
@@ -93,98 +87,117 @@ svg {
 <!-- Grid -->
 <g stroke="#ddd" stroke-width="0.3">
 <script>
-for (let i = 0; i <= 200; i += 10) {
-  document.write(`<line x1="${i}" y1="0" x2="${i}" y2="200"/>`);
-  document.write(`<line x1="0" y1="${i}" x2="200" y2="${i}"/>`);
+for (let i=0;i<=200;i+=10){
+ document.write(`<line x1="${i}" y1="0" x2="${i}" y2="200"/>`);
+ document.write(`<line x1="0" y1="${i}" x2="200" y2="${i}"/>`);
 }
 </script>
 </g>
 
 <g id="zones">
 
-<!-- Top Left Row -->
+<!-- Top Row -->
 <g class="zone green"><rect x="10" y="10" width="16" height="6"/><text x="11" y="14">UB002</text></g>
-<g class="zone green"><rect x="38" y="10" width="16" height="6"/><text x="39" y="14">ST200</text></g>
-<g class="zone green"><rect x="66" y="10" width="16" height="6"/><text x="67" y="14">ST203</text></g>
-<g class="zone green"><rect x="94" y="10" width="16" height="6"/><text x="95" y="14">ST300</text></g>
-<g class="zone green"><rect x="122" y="10" width="16" height="6"/><text x="123" y="14">ST350</text></g>
-<g class="zone green"><rect x="144" y="18" width="16" height="6"/><text x="145" y="22">ST340</text></g>
+<g class="zone green"><rect x="35" y="10" width="16" height="6"/><text x="36" y="14">ST200</text></g>
+<g class="zone green"><rect x="60" y="10" width="16" height="6"/><text x="61" y="14">ST205</text></g>
+<g class="zone green"><rect x="85" y="10" width="16" height="6"/><text x="86" y="14">ST300</text></g>
+<g class="zone green"><rect x="110" y="10" width="16" height="6"/><text x="111" y="14">ST350</text></g>
+<g class="zone green"><rect x="135" y="18" width="16" height="6"/><text x="136" y="22">ST340</text></g>
 
-<!-- Exit -->
-<g class="zone red"><rect x="168" y="8" width="20" height="10"/><text x="172" y="15">EXIT</text></g>
+<!-- Exit + Frame -->
+<g class="zone red"><rect x="165" y="8" width="24" height="10"/><text x="171" y="15">EXIT</text></g>
+<g class="zone gray"><rect x="160" y="20" width="6" height="20"/><text x="160.5" y="30">Frame</text></g>
 
-<!-- Vertical Stations Left -->
-<g class="zone green"><rect x="10" y="30" width="6" height="16"/><text x="10.5" y="40">ST100</text></g>
-<g class="zone green"><rect x="10" y="50" width="6" height="16"/><text x="10.5" y="60">ST110</text></g>
-<g class="zone green"><rect x="10" y="70" width="6" height="16"/><text x="10.5" y="80">ST120</text></g>
-<g class="zone green"><rect x="10" y="90" width="6" height="16"/><text x="10.5" y="100">ST130</text></g>
+<!-- Left column -->
+<g class="zone green"><rect x="10" y="30" width="6" height="15"/><text x="10.5" y="38">ST100</text></g>
+<g class="zone green"><rect x="10" y="48" width="6" height="15"/><text x="10.5" y="56">ST110</text></g>
+<g class="zone green"><rect x="10" y="66" width="6" height="15"/><text x="10.5" y="74">ST120</text></g>
+<g class="zone green"><rect x="10" y="84" width="6" height="15"/><text x="10.5" y="92">ST130</text></g>
+<g class="zone green"><rect x="10" y="102" width="6" height="15"/><text x="10.5" y="110">ST135</text></g>
 
-<!-- Centre racks -->
+<!-- Lubricant label -->
+<text x="3" y="70" writing-mode="vertical-rl" font-size="5">Lubricant</text>
+
+<!-- Mid left -->
 <g class="zone green"><rect x="44" y="50" width="16" height="6"/><text x="45" y="54">ST095</text></g>
 <g class="zone green"><rect x="70" y="50" width="16" height="6"/><text x="71" y="54">ST040</text></g>
 <g class="zone green"><rect x="96" y="50" width="16" height="6"/><text x="97" y="54">ST020</text></g>
 
-<!-- RE02 -->
-<g class="zone gray"><rect x="60" y="42" width="16" height="6"/><text x="61" y="46">RE02</text></g>
+<!-- RE & Rear Ends -->
+<g class="zone gray"><rect x="60" y="42" width="18" height="6"/><text x="61" y="46">RE02</text></g>
+<g class="zone gray"><rect x="45" y="62" width="25" height="8"/><text x="46" y="68">Left Rear end</text></g>
+<g class="zone gray"><rect x="75" y="70" width="50" height="10"/><text x="77" y="77">Rear end</text></g>
+<g class="zone gray"><rect x="80" y="85" width="50" height="10"/><text x="82" y="92">Right Rear end</text></g>
 
-<!-- Right Rear -->
-<g class="zone gray"><rect x="80" y="70" width="40" height="10"/><text x="82" y="77">Right Rear End</text></g>
+<!-- Center -->
+<g class="zone gray"><rect x="95" y="78" width="8" height="25"/><text x="95.5" y="90">R01 / ST010</text></g>
+<g class="zone green"><rect x="70" y="110" width="16" height="6"/><text x="71" y="114">ST030</text></g>
+<g class="zone green"><rect x="90" y="110" width="16" height="6"/><text x="91" y="114">ST010</text></g>
 
 <!-- Logistics -->
-<g class="zone gray"><rect x="90" y="120" width="30" height="8"/><text x="93" y="125">Logistics</text></g>
+<g class="zone gray"><rect x="90" y="125" width="30" height="8"/><text x="93" y="131">Logistics</text></g>
 
-<!-- Endpoints -->
-<g class="zone red"><rect x="10" y="120" width="16" height="6"/><text x="11" y="124">End</text></g>
-<g class="zone red"><rect x="28" y="120" width="16" height="6"/><text x="29" y="124">End</text></g>
+<!-- Right stations -->
+<g class="zone gray"><rect x="150" y="50" width="10" height="10"/><text x="150.5" y="56">Station 2</text></g>
+<g class="zone gray"><rect x="150" y="65" width="10" height="10"/><text x="150.5" y="71">Station 3</text></g>
+<g class="zone gray"><rect x="150" y="80" width="10" height="10"/><text x="150.5" y="86">Station 4</text></g>
+<g class="zone gray"><rect x="150" y="95" width="10" height="10"/><text x="150.5" y="101">Station 5</text></g>
+<g class="zone gray"><rect x="150" y="110" width="10" height="10"/><text x="150.5" y="116">Station 6</text></g>
 
-<!-- Robots Area -->
-<g class="zone yellow"><rect x="60" y="150" width="10" height="10"/><text x="61" y="156">IR1</text></g>
-<g class="zone yellow"><rect x="75" y="150" width="10" height="10"/><text x="76" y="156">IR2</text></g>
-<g class="zone yellow"><rect x="60" y="165" width="10" height="10"/><text x="61" y="171">IR3</text></g>
-<g class="zone yellow"><rect x="75" y="165" width="10" height="10"/><text x="76" y="171">IR4</text></g>
+<!-- Robots -->
+<g transform="translate(60 150)">
+  <circle cx="0" cy="0" r="3"/><text x="-6" y="8">O30IR1</text>
+  <circle cx="15" cy="0" r="3"/><text x="9" y="8">O30IR2</text>
+  <circle cx="0" cy="15" r="3"/><text x="-6" y="23">O30IR3</text>
+  <circle cx="15" cy="15" r="3"/><text x="9" y="23">O30IR4</text>
+</g>
 
 <!-- LHS / RHS -->
-<g class="zone blue"><rect x="45" y="145" width="12" height="6"/><text x="46" y="149">LHS</text></g>
-<g class="zone blue"><rect x="90" y="145" width="12" height="6"/><text x="91" y="149">RHS</text></g>
+<g class="zone blue"><rect x="45" y="140" width="12" height="6"/><text x="46" y="145">LHS</text></g>
+<g class="zone blue"><rect x="95" y="140" width="12" height="6"/><text x="96" y="145">RHS</text></g>
+
+<!-- Legend -->
+<text x="120" y="155" font-size="4">
+<tspan x="120" dy="0">Each Robot has a unique identifier</tspan>
+<tspan x="120" dy="6">Example: O40IR3</tspan>
+<tspan x="120" dy="6">O40 – Station 40</tspan>
+<tspan x="120" dy="6">IR – Industrial Robot</tspan>
+<tspan x="120" dy="6">3 – Robot 3</tspan>
+<tspan x="120" dy="8">RHS = even numbers</tspan>
+<tspan x="120" dy="6">LHS = odd numbers</tspan>
+</text>
 
 </g>
 </svg>
 </div>
 
 <script>
-const svg = document.getElementById("warehouseMap");
-let selected = null, offset = {};
+const svg=document.getElementById("warehouseMap");
+let selected=null,offset={};
 
-svg.addEventListener("mousedown", e => {
-  const g = e.target.closest(".zone");
-  if (!g) return;
-  selected = g;
-  const rect = g.querySelector("rect");
-  offset.x = e.offsetX - rect.x.baseVal.value * 4;
-  offset.y = e.offsetY - rect.y.baseVal.value * 4;
-  g.classList.add("selected");
+svg.addEventListener("mousedown",e=>{
+  const g=e.target.closest(".zone");
+  if(!g)return;
+  selected=g;
+  const r=g.querySelector("rect");
+  offset.x=e.offsetX-r.x.baseVal.value*4;
+  offset.y=e.offsetY-r.y.baseVal.value*4;
 });
 
-svg.addEventListener("mousemove", e => {
-  if (!selected) return;
-  const rect = selected.querySelector("rect");
-  const text = selected.querySelector("text");
-  let x = (e.offsetX - offset.x) / 4;
-  let y = (e.offsetY - offset.y) / 4;
-  rect.setAttribute("x", x);
-  rect.setAttribute("y", y);
-  text.setAttribute("x", x + 1);
-  text.setAttribute("y", y + 4);
+svg.addEventListener("mousemove",e=>{
+  if(!selected)return;
+  const r=selected.querySelector("rect");
+  const t=selected.querySelector("text");
+  let x=(e.offsetX-offset.x)/4;
+  let y=(e.offsetY-offset.y)/4;
+  r.setAttribute("x",x);
+  r.setAttribute("y",y);
+  t.setAttribute("x",x+1);
+  t.setAttribute("y",y+4);
 });
 
-svg.addEventListener("mouseup", () => {
-  if (selected) selected.classList.remove("selected");
-  selected = null;
-});
-
-function addZone(color) {
-  alert("Use drag‑to‑duplicate logic if needed.");
-}
+svg.addEventListener("mouseup",()=>selected=null);
+function addZone(){    alert("Duplicating zones intentionally disabled.");}
 </script>
 
 </body>
