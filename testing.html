@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Editable Warehouse Map</title>
+<title>Map</title>
 
 <style>
 html, body {
@@ -79,7 +79,7 @@ svg {
 </div>
 
 <div id="canvas-wrapper">
-<svg id="warehouseMap" width="800" height="800" viewBox="0 0 200 200">
+<svg id="Map" width="800" height="800" viewBox="0 0 200 200">
 
 <!-- Boundary -->
 <rect x="0" y="0" width="200" height="200" fill="none" stroke="black" stroke-width="2"/>
@@ -172,7 +172,7 @@ for (let i=0;i<=200;i+=10){
 </div>
 
 <script>
-const svg=document.getElementById("warehouseMap");
+const svg=document.getElementById("Map");
 let selected=null,offset={};
 
 svg.addEventListener("mousedown",e=>{
